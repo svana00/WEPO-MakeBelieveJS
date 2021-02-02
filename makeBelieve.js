@@ -23,16 +23,22 @@
 
     // 4. find parent method
     MakeBelieveElement.prototype.parent = function(cssSelector) {
-        return cssSelector;
+        parent = [];
+        for (var i = 0; i < this.nodes.length; i++) {
+            var currentElement = this.nodes[i];
+            parent.push(currentElement.offsetParent);
+        }
+        return parent;
     }
 
     // 5. grandParent method
     MakeBelieveElement.prototype.grandParent = function(cssSelector) {
-        return 5;
+        parents = this.nodes;
+        return parents;
     }
 
     // 6. ancestor
-    MakeBelieveElement.prototype.ancestor = function(cssSelector) {
+    MakeBelieveElement.prototype.ancestor = function(optionalCssSelector = 0) {
         return 6;
     }    
 
@@ -66,10 +72,31 @@
 
 var paragraphs = __('p');
 var divs = __('.item');
+var parent = __('#password').parent();
+var formParent = __('#password').parent('form');
+var grandParent = __('#password').grandParent();
+var idGrandParent = __('#password').grandParent('#grandma');
+var emptyGrandParent = __('#password').grandParent('#unknownId');
+
+
+
 console.log(paragraphs.getLength());
 console.log(paragraphs.getTagNames());
 console.log(divs.getLength());
 console.log(divs.getTagNames());
+
+// testing parent
+console.log(parent); 
+console.log(formParent); 
+
+// testing grandParent
+console.log(grandParent); // returns the div with id #grandma
+console.log(idGrandParent); // returns same div
+console.log(emptyGrandParent); // reutrns an empty object
+
+// testing ancestor
+
+
 
 
 // var herokuUrl = 'https://serene-island-81305.herokuapp.com';
@@ -101,50 +128,3 @@ console.log(divs.getTagNames());
 // };
 
 // postRequest.send(JSON.stringify({ a: 1, b: 2, c: 3 }));
-
-
-
-
-
-
-(function (globalObj) {
-    // Setup MakeBelieveJS
-
-    // MakeBelieveElement constructor function
-    function MakeBelieveElement(nodes) {
-        // This means this instance of MakeBelieveElement
-        this.nodes = nodes;
-    }
-
-    MakeBelieveElement.prototype.getLength = function() {
-        return this.nodes.length;
-    };
-
-    MakeBelieveElement.prototype.getTagNames = function() {
-        var tagNames = [];
-        for (var i = 0; i < this.nodes.length; i++) {
-            var currentElement = this.nodes[i];
-            tagNames.push(currentElement.tagName.toLowerCase());
-        }
-        return tagNames;
-    }
-
-
-    function query(cssSelector) {
-        return new MakeBelieveElement(document.querySelectorAll(cssSelector));
-    }
-
-    // find parent
-
-
-    globalObj.__ = query;
-})(window);
-
-var paragraphs = __('p');
-var divs = __('.item');
-var hello = __('p').parent('.item');
-console.log(paragraphs.getLength());
-console.log(paragraphs.getTagNames());
-console.log(divs.getLength());
-console.log(divs.getTagNames());
-console.log(hello);
