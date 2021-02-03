@@ -26,26 +26,20 @@
         parent = [];
         for (var i = 0; i < this.nodes.length; i++) {
             var currentElement = this.nodes[i];
-            parent.push(currentElement.offsetParent);
+            parent.push(currentElement.parentNode);
         }
         return parent;
     }
 
     // 5. grandParent method
     MakeBelieveElement.prototype.grandParent = function(cssSelector) {
-        parents = [];
+        parent = [];
         for (var i = 0; i < this.nodes.length; i++) {
             var currentElement = this.nodes[i];
-            parent.push(currentElement.offsetParent);
+            parent.push(currentElement.parentNode);
         }
-
-        for (var a = 0; a < parents.length; a++) {
-            var currentParent = parents[a];
-            if (currentParent.offsetParent) {
-                return currentParent.offsetParent;
-            }
-        }
-        return;
+        grandParent = parent[0].parentNode;
+        return grandParent;
     }
 
     // 6. ancestor
@@ -63,8 +57,26 @@
     // 8. insert text method
 
     // 9. append HTML method
+    function appendHTML(someHTML) {
+        const createEl = document.createElement('div');
+        const innerhtml = createEl.innerHTML = someHTML;
+        const parentEl = document.getElementById('body');
+        parentEl.appendChild(createEl);
+
+        return parentEl;
+    }
 
     // 10. prepend HTML method
+    function prependHTML(someHTML) {
+        const parentEl = document.getElementById('body');
+        const firstchildEl = document.getElementById('firstchild');
+ 
+        const createEl = document.createElement('div');
+        const innerhtml = createEl.innerHTML = 'i am a frontend developer';
+
+        parentEl.insertBefore(createEl, firstchildEl);
+        return parentEl;
+    }
 
     // 11. delete method
 
@@ -97,8 +109,8 @@ console.log(divs.getLength());
 console.log(divs.getTagNames());
 
 // testing parent
-console.log(parent); 
-console.log(formParent); 
+console.log(paragraphs.parent()); 
+console.log(paragraphs.parent('#paragraph_parent')); 
 
 // testing grandParent
 console.log(grandParent); // returns the div with id #grandma
