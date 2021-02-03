@@ -12,14 +12,17 @@
         <div id="paragraph_parent">
             <p id="paragraph-1"></p>
             <p id="paragraph-2"></p>
-            <p id="paragraph-3"></p>
         </div>
-
-        <div id="grandma">
-            <form>
-                <input type="text" id="username" name="username" />
-                <input type="password" id="password" name="password"/>
-            </form>
+        <div class="root">
+            <div class="ancestor-sib"></div>
+            <div class="ancestor">
+                <div id="grandma">
+                    <form>
+                        <input type="text" id="username" name="username" />
+                        <input type="password" id="password" name="password"/>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <script src="makeBelieve.js" charset="utf-8"></script>

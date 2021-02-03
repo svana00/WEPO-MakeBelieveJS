@@ -43,8 +43,15 @@
     }
 
     // 6. ancestor
-    MakeBelieveElement.prototype.ancestor = function(optionalCssSelector = 0) {
-        return 6;
+    MakeBelieveElement.prototype.ancestor = function(cssSelector) {
+        parent = [];
+        for (var i = 0; i < this.nodes.length; i++) {
+            var currentElement = this.nodes[i];
+            parent.push(currentElement.parentNode);
+        }
+        grandParent = parent[0].parentNode;
+        ancestor = grandParent.parentNode;
+        return ancestor;
     }    
 
     //  query selector
@@ -97,9 +104,14 @@ var paragraphs = __('p');
 var divs = __('.item');
 var parent = __('#password').parent();
 var formParent = __('#password').parent('form');
+
 var grandParent = __('#password').grandParent();
 var idGrandParent = __('#password').grandParent('#grandma');
 var emptyGrandParent = __('#password').grandParent('#unknownId');
+
+var ancestor = __('#password').ancestor('.ancestor');
+var rootElem = __('#password').ancestor('.root');
+var ancestorSib = __('#password').ancestor('.ancestor-sib');
 
 
 
@@ -118,6 +130,9 @@ console.log(idGrandParent); // returns same div
 console.log(emptyGrandParent); // reutrns an empty object
 
 // testing ancestor
+console.log(ancestor);
+console.log(rootElem);
+console.log(ancestorSib);
 
 
 
