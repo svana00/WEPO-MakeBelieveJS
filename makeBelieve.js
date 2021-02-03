@@ -33,8 +33,19 @@
 
     // 5. grandParent method
     MakeBelieveElement.prototype.grandParent = function(cssSelector) {
-        parents = this.nodes;
-        return parents;
+        parents = [];
+        for (var i = 0; i < this.nodes.length; i++) {
+            var currentElement = this.nodes[i];
+            parent.push(currentElement.offsetParent);
+        }
+
+        for (var a = 0; a < parents.length; a++) {
+            var currentParent = parents[a];
+            if (currentParent.offsetParent) {
+                return currentParent.offsetParent;
+            }
+        }
+        return;
     }
 
     // 6. ancestor
