@@ -141,7 +141,7 @@
     // 12. JQuery ajax method
 
     // 13. css() method
-    MakeBelieveElement.prototype.css = function(cssElement, cssElementVal) {
+    MakeBelieveElement.prototype.css = function (cssElement, cssElementVal) {
 
     }
 
@@ -151,47 +151,47 @@
     }
 
     // 15. submit handler for forms
-    MakeBelieveElement.prototype.onSubmit = function() {
-        
+    MakeBelieveElement.prototype.onSubmit = function () {
+
     }
 
     // 16. input handler for input tags
-    MakeBelieveElement.prototype.onInput = function() {
+    MakeBelieveElement.prototype.onInput = function () {
 
     }
 
     globalObj.__ = query;
 })(window);
 
-// // testing parent
-// var paragraphs = __('p');
-// var divs = __('.item');
-// var parent = __('#password').parent();
-// var formParent = __('#password').parent('form');
+// testing parent
+var paragraphs = __('p');
+var divs = __('.item');
+var parent = __('#password').parent();
+var formParent = __('#password').parent('form');
 
-// console.log(paragraphs.parent());
-// console.log(paragraphs.parent('#paragraph_parent'));
-// console.log(divs.parent());
+console.log(paragraphs.parent());
+console.log(paragraphs.parent('#paragraph_parent'));
+console.log(divs.parent());
 
-// // testing grandParent
-// var grandParent = __('#password').grandParent();
-// var idGrandParent = __('#password').grandParent('#grandma');
-// var emptyGrandParent = __('#password').grandParent('#unknownId');
+// testing grandParent
+var grandParent = __('#password').grandParent();
+var idGrandParent = __('#password').grandParent('#grandma');
+var emptyGrandParent = __('#password').grandParent('#unknownId');
 
-// console.log(grandParent); // returns the div with id #grandma
-// console.log(idGrandParent); // returns same div
-// console.log(emptyGrandParent); // reutrns an empty object
+console.log(grandParent); // returns the div with id #grandma
+console.log(idGrandParent); // returns same div
+console.log(emptyGrandParent); // reutrns an empty object
 
 // testing ancestor
-// var ancestor1 = __('#password').ancestor();
-// var ancestor2 = __('#password').ancestor('.ancestor');
-// var rootElem = __('#password').ancestor('.root');
-// var ancestorSib = __('#password').ancestor('.ancestor-sib');
+var ancestor1 = __('#password').ancestor();
+var ancestor2 = __('#password').ancestor('.ancestor');
+var rootElem = __('#password').ancestor('.root');
+var ancestorSib = __('#password').ancestor('.ancestor-sib');
 
-// console.log(ancestor1); // Returns div with class .ancestor
-// console.log(ancestor2); // Returns div with class .ancestor
-// console.log(rootElem); // Returns div with class .root
-// console.log(ancestorSib); // Returns empty
+console.log(ancestor1); // Returns div with class .ancestor
+console.log(ancestor2); // Returns div with class .ancestor
+console.log(rootElem); // Returns div with class .root
+console.log(ancestorSib); // Returns empty
 
 //testing onClick
 __("#password").onClick(function (evt) {
