@@ -143,28 +143,35 @@
     }
 
     // 12. JQuery ajax method
+    globalObj.ajax = function () {
+        return 0;
+    }
 
     // 13. css() method
     MakeBelieveElement.prototype.css = function (cssElement, cssElementVal) {
         //document.getElementById("myH1").style.color = "red"; 
         for (var i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].style.cssElement = cssElementVal;
+            this.nodes[i].style[cssElement] = cssElementVal;
         };
     }
 
     // 14. toggleClass() implementation
     MakeBelieveElement.prototype.toggleClass = function (someClass) {
-
+        return 0
     }
 
     // 15. submit handler for forms
-    MakeBelieveElement.prototype.onSubmit = function () {
-
+    MakeBelieveElement.prototype.onSubmit = function (callback) {
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].addEventListener("submit", callback);
+        }
     }
 
     // 16. input handler for input tags
-    MakeBelieveElement.prototype.onInput = function () {
-
+    MakeBelieveElement.prototype.onInput = function (callback) {
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].addEventListener("input", callback);
+        }
     }
 
     globalObj.__ = query;
@@ -208,6 +215,15 @@ __("#password").onClick(function (evt) {
 // testing add text
 __("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
 
+// testing on submit
+__("#my-form").onSubmit(function (evt) {
+    console.log("Hello from submit");
+})
+
+// testing in input
+__("#username").onInput(function (evt) {
+    console.log("Hello from input");
+})
 
 // var herokuUrl = 'https://serene-island-81305.herokuapp.com';
 
