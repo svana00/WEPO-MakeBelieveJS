@@ -159,7 +159,9 @@
 
     // 14. toggleClass() implementation
     MakeBelieveElement.prototype.toggleClass = function (someClass) {
-        return 0
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].classList.toggle(someClass);
+        };
     }
 
     // 15. submit handler for forms
