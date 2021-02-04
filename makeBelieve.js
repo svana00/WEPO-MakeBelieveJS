@@ -142,7 +142,10 @@
 
     // 13. css() method
     MakeBelieveElement.prototype.css = function(cssElement, cssElementVal) {
-
+        //document.getElementById("myH1").style.color = "red"; 
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].style.cssElement = cssElementVal;
+        };
     }
 
     // 14. toggleClass() implementation
@@ -152,7 +155,7 @@
 
     // 15. submit handler for forms
     MakeBelieveElement.prototype.onSubmit = function() {
-        
+
     }
 
     // 16. input handler for input tags
