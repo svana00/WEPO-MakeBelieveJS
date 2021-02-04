@@ -6,6 +6,14 @@
     function MakeBelieveElement(nodes) {
         // This means this instance of MakeBelieveElement
         this.nodes = nodes;
+        var i = 0;
+
+        if (nodes && nodes.length) {
+            nodes.forEach(nodes => {
+                this[i] = nodes;
+                i += 1;
+            });
+        }
     }
 
     MakeBelieveElement.prototype.getLength = function () {
@@ -35,7 +43,7 @@
             if (!parents.includes(currentParent)) {
                 if (cssSelector !== "") {
                     if (validParentNodes.length > 0) {
-                        for (i = 0; i < validParentNodes.length; i++) {
+                        for (var i = 0; i < validParentNodes.length; i++) {
                             if (validParentNodes[i] === currentParent) {
                                 parents.push(currentParent);
                             }
@@ -46,51 +54,42 @@
                 }
             }
         }
-        return parents;
+        return new MakeBelieveElement(parents);
     }
 
-    // TODO: Need to handle case for query selector
     // 5. grandParent method
     MakeBelieveElement.prototype.grandParent = function (cssSelector = "") {
-        parents = [];
-        for (var i = 0; i < this.nodes.length; i++) {
-            var currentElement = this.nodes[i];
-            parents.push(currentElement.parentNode);
-        }
+        return this.parent().parent(cssSelector);
+    }
 
+    // 6. Ancestor
+    MakeBelieveElement.prototype.ancestor = function (cssSelector = "") {
         if (cssSelector !== "") {
-            var validGrandparentNodes = document.querySelectorAll(cssSelector);
+            var validAncestorNodes = document.querySelectorAll(cssSelector);
         }
 
-        for (var i = 0; i < parents.length; i++) {
-            var currentParent = parents[i];
-            var currentGrandparent = currentParent.parentNode;
+        grandparents = this.grandParent();
+        ancestor = "";
 
+        for (var i = 0; i < grandparents.getLength(); i++) {
+            var currentGrandparent = grandparents[i];
             if (cssSelector !== "") {
-                if (validGrandparentNodes.length > 0) {
-                    for (i = 0; i < validGrandparentNodes.length; i++) {
-                        if (validGrandparentNodes[i] === currentGrandparent) {
-                            return currentGrandparent
+                var currentAncestor = currentGrandparent.parentNode;
+                for (var i = 0; i < validAncestorNodes.length; i++) {
+                    while (currentAncestor) {
+                        if (currentAncestor === validAncestorNodes[i]) {
+                            return new MakeBelieveElement(currentAncestor);
+                        } else {
+                            currentAncestor = currentAncestor.parentNode;
                         }
                     }
                 }
             } else {
-                return currentGrandparent;
+                ancestor = grandparents[i].parentNode;
+                return new MakeBelieveElement(ancestor);
             }
         }
-        return null; // Not sure about this
-    }
-
-    // 6. ancestor
-    MakeBelieveElement.prototype.ancestor = function (cssSelector) {
-        parent = [];
-        for (var i = 0; i < this.nodes.length; i++) {
-            var currentElement = this.nodes[i];
-            parent.push(currentElement.parentNode);
-        }
-        grandParent = parent[0].parentNode;
-        ancestor = grandParent.parentNode;
-        return ancestor;
+        return new MakeBelieveElement();
     }
 
     //  query selector
@@ -139,7 +138,7 @@
     globalObj.__ = query;
 })(window);
 
-// testing parent
+// // testing parent
 // var paragraphs = __('p');
 // var divs = __('.item');
 // var parent = __('#password').parent();
@@ -149,7 +148,7 @@
 // console.log(paragraphs.parent('#paragraph_parent'));
 // console.log(divs.parent());
 
-// testing grandParent
+// // testing grandParent
 // var grandParent = __('#password').grandParent();
 // var idGrandParent = __('#password').grandParent('#grandma');
 // var emptyGrandParent = __('#password').grandParent('#unknownId');
@@ -159,13 +158,15 @@
 // console.log(emptyGrandParent); // reutrns an empty object
 
 // testing ancestor
-var ancestor = __('#password').ancestor('.ancestor');
+var ancestor1 = __('#password').ancestor();
+var ancestor2 = __('#password').ancestor('.ancestor');
 var rootElem = __('#password').ancestor('.root');
 var ancestorSib = __('#password').ancestor('.ancestor-sib');
 
-console.log(ancestor);
-console.log(rootElem);
-console.log(ancestorSib);
+console.log(ancestor1); // Returns div with class .ancestor
+console.log(ancestor2); // Returns div with class .ancestor
+console.log(rootElem); // Returns div with class .root
+console.log(ancestorSib); // Returns empty
 
 
 // console.log(paragraphs.getLength());
