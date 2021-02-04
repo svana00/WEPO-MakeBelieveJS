@@ -29,6 +29,11 @@
         return tagNames;
     }
 
+    // Query selector
+    function query(cssSelector) {
+        return new MakeBelieveElement(document.querySelectorAll(cssSelector));
+    }
+
     // 4. Find parent method
     MakeBelieveElement.prototype.parent = function (cssSelector = "") {
         if (cssSelector !== "") {
@@ -92,17 +97,22 @@
         return new MakeBelieveElement();
     }
 
-    //  query selector
-    function query(cssSelector) {
-        return new MakeBelieveElement(document.querySelectorAll(cssSelector));
+    // 7. Click handler
+    MakeBelieveElement.prototype.onClick = function (callback) {
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].addEventListener("click", callback);
+        };
     }
 
-    // 7.click handler
+    // 8. Insert text method
+    MakeBelieveElement.prototype.insertText = function (text) {
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].textContent = text;
+        };
+    }
 
-    // 8. insert text method
-
-    // 9. append HTML method
-    function appendHTML(someHTML) {
+    // 9. Append HTML method
+    MakeBelieveElement.prototype.append = function (someHTML) {
         const createEl = document.createElement('div');
         const innerhtml = createEl.innerHTML = someHTML;
         const parentEl = document.getElementById('body');
@@ -112,7 +122,7 @@
     }
 
     // 10. prepend HTML method
-    function prependHTML(someHTML) {
+    MakeBelieveElement.prototype.prepend = function (someHTML) {
         const parentEl = document.getElementById('body');
         const firstchildEl = document.getElementById('firstchild');
 
@@ -124,6 +134,9 @@
     }
 
     // 11. delete method
+    MakeBelieveElement.prototype.delete = function (cssSelector = "") {
+        return 0;
+    }
 
     // 12. JQuery ajax method
 
@@ -158,21 +171,23 @@
 // console.log(emptyGrandParent); // reutrns an empty object
 
 // testing ancestor
-var ancestor1 = __('#password').ancestor();
-var ancestor2 = __('#password').ancestor('.ancestor');
-var rootElem = __('#password').ancestor('.root');
-var ancestorSib = __('#password').ancestor('.ancestor-sib');
+// var ancestor1 = __('#password').ancestor();
+// var ancestor2 = __('#password').ancestor('.ancestor');
+// var rootElem = __('#password').ancestor('.root');
+// var ancestorSib = __('#password').ancestor('.ancestor-sib');
 
-console.log(ancestor1); // Returns div with class .ancestor
-console.log(ancestor2); // Returns div with class .ancestor
-console.log(rootElem); // Returns div with class .root
-console.log(ancestorSib); // Returns empty
+// console.log(ancestor1); // Returns div with class .ancestor
+// console.log(ancestor2); // Returns div with class .ancestor
+// console.log(rootElem); // Returns div with class .root
+// console.log(ancestorSib); // Returns empty
 
+//testing onClick
+__("#password").onClick(function (evt) {
+    console.log(evt.target.value);
+})
 
-// console.log(paragraphs.getLength());
-// console.log(paragraphs.getTagNames());
-// console.log(divs.getLength());
-// console.log(divs.getTagNames());
+// testing add text
+__("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
 
 
 // var herokuUrl = 'https://serene-island-81305.herokuapp.com';
