@@ -139,7 +139,9 @@
 
     // 11. delete method
     MakeBelieveElement.prototype.delete = function (cssSelector = "") {
-        return 0;
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].remove();
+        };
     }
 
     // 12. JQuery ajax method
@@ -214,6 +216,8 @@ __("#password").onClick(function (evt) {
 
 // testing add text
 __("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
+
+//__("#shakespeare-novel").delete()
 
 // testing on submit
 __("#my-form").onSubmit(function (evt) {
