@@ -115,26 +115,48 @@
         };
     }
 
-    // 9. Append HTML method
-    MakeBelieveElement.prototype.append = function (someHTML) {
-        const createEl = document.createElement('div');
-        const innerhtml = createEl.innerHTML = someHTML;
-        const parentEl = document.getElementById('body');
-        parentEl.appendChild(createEl);
+    function isValidHtml(string) {
+        var doc = document.createElement('div');
+        doc.innerHTML = string;
+        return (doc.innerHTML === string);
+    }
 
-        return parentEl;
+    function is_dom_element(htmlString) {
+        return typeof htmlString === 'object' && htmlString.nodeType !== undefined;
+    }
+
+    // 9. Append HTML method
+    MakeBelieveElement.prototype.append = function (htmlString) {
+        if (isValidHtml(htmlString)) {
+            console.log("Valid html");
+            for (var i = 0; i < this.nodes.length; i++) {
+                this.nodes[i].innerHTML += htmlString;
+            };
+        } else if (is_dom_element(htmlString)) {
+            console.log("Valid DOM");
+            for (var i = 0; i < this.nodes.length; i++) {
+                this.nodes[i].appendChild(htmlString);
+            };
+        } else {
+            console.log("Nothing :(");
+        }
     }
 
     // 10. prepend HTML method
-    MakeBelieveElement.prototype.prepend = function (someHTML) {
-        const parentEl = document.getElementById('body');
-        const firstchildEl = document.getElementById('firstchild');
-
-        const createEl = document.createElement('div');
-        const innerhtml = createEl.innerHTML = 'i am a frontend developer';
-
-        parentEl.insertBefore(createEl, firstchildEl);
-        return parentEl;
+    MakeBelieveElement.prototype.prepend = function (htmlString) {
+        if (isValidHtml(htmlString)) {
+            console.log("Valid html");
+            for (var i = 0; i < this.nodes.length; i++) {
+                this.nodes[i].innerHTML = htmlString + this.nodes[i].innerHTML;
+            };
+        } else if (is_dom_element(htmlString)) {
+            console.log("Valid DOM");
+            for (var i = 0; i < this.nodes.length; i++) {
+                this.nodes[i].insertBefore(htmlString, this.nodes[i].firstChild);
+            };
+        } else {
+            console.log("Nothing :(");
+        }
     }
 
     // 11. delete method
@@ -221,15 +243,23 @@ __("#shakespeare-novel").insertText("If you can't love urself, how in the hell u
 
 //__("#shakespeare-novel").delete()
 
-// testing on submit
-__("#my-form").onSubmit(function (evt) {
-    console.log("Hello from submit");
-})
+// // testing on submit
+// __("#my-form").onSubmit(function (evt) {
+//     console.log("Hello from submit");
+// })
 
-// testing in input
-__("#username").onInput(function (evt) {
-    console.log("Hello from input");
-})
+// // testing in input
+// __("#username").onInput(function (evt) {
+//     console.log("Hello from input");
+// })
+
+// testing append
+__(".the-appender").append("I am an appended paragraph!")
+__(".the-appender").append(document.createElement('p').appendChild(document.createTextNode("I am an appended paragraph!")));
+
+// testing prepend
+__(".the-prepender").prepend("I am a prepended paragraph!")
+__(".the-prepender").prepend(document.createElement('p').appendChild(document.createTextNode("I am a prepended paragraph!")));
 
 // var herokuUrl = 'https://serene-island-81305.herokuapp.com';
 
