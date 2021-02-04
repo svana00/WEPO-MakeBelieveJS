@@ -141,12 +141,24 @@
     // 12. JQuery ajax method
 
     // 13. css() method
+    MakeBelieveElement.prototype.css = function(cssElement, cssElementVal) {
+
+    }
 
     // 14. toggleClass() implementation
+    MakeBelieveElement.prototype.toggleClass = function (someClass) {
+
+    }
 
     // 15. submit handler for forms
+    MakeBelieveElement.prototype.onSubmit = function() {
+        
+    }
 
     // 16. input handler for input tags
+    MakeBelieveElement.prototype.onInput = function() {
+
+    }
 
     globalObj.__ = query;
 })(window);
