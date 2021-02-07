@@ -6,11 +6,12 @@
     function MakeBelieveElement(nodes) {
         // This means this instance of MakeBelieveElement
         this.nodes = nodes;
+
         var i = 0;
 
         if (nodes && nodes.length) {
-            nodes.forEach(nodes => {
-                this[i] = nodes;
+            nodes.forEach(node => {
+                this[i] = node;
                 i += 1;
             });
         }
@@ -23,13 +24,14 @@
     // 4. Find parent method
     MakeBelieveElement.prototype.parent = function (cssSelector = "") {
         // If selector, find all elements that are valid
+        var validParentNodes = {};
         if (cssSelector !== "") {
             var validParentNodes = document.querySelectorAll(cssSelector);
         }
 
-        parents = [];
+        var parents = [];
 
-        if (this.nodes.length > 0) {
+        if ((this.nodes.length) > 0) {
             for (var i = 0; i < this.nodes.length; i++) {
                 var currentElement = this.nodes[i];
                 var currentParent = currentElement.parentNode;
@@ -49,31 +51,105 @@
                 }
             }
         }
+
         return new MakeBelieveElement(parents);
     }
 
     // 5. grandParent method
     MakeBelieveElement.prototype.grandParent = function (cssSelector = "") {
-        return this.parent().parent(cssSelector);
+        if (this.nodes.length == 1) {
+            return this.parent().parent(cssSelector);
+        }
+
+        var validGrandparentNodes = {};
+
+        // Find all valid nodes in the document if query
+        if (cssSelector !== "") {
+            var validGrandparentNodes = document.querySelectorAll(cssSelector);
+        }
+
+        // Find all parents
+        var parents = [];
+        for (var i = 0; i < this.nodes.length; i++) {
+            var currentElement = this.nodes[i];
+
+            if (currentElement.parentNode) {
+                var currentParent = currentElement.parentNode;
+                parents.push(currentParent);
+            }
+        }
+
+        var grandparents = []
+
+        // Find the first valid grandparent for every node and add to list
+        for (var i = 0; i < parents.length; i++) {
+            var currentParent = parents[i];
+
+            if (currentParent.parentNode) {
+                var currentGrandparent = currentParent.parentNode;
+
+                if (!grandparents.includes(currentGrandparent)) {
+                    if (cssSelector !== "") {
+                        if (validGrandparentNodes.length > 0) {
+                            for (i = 0; i < validGrandparentNodes.length; i++) {
+                                if (validGrandparentNodes[i] === currentGrandparent) {
+                                    grandparents.push(currentGrandparent);
+                                }
+                            }
+                        }
+                    } else {
+                        grandparents.push(currentGrandparent);
+                    }
+                }
+            }
+
+        }
+        return new MakeBelieveElement(grandparents);
     }
 
     // 6. Ancestor
     MakeBelieveElement.prototype.ancestor = function (cssSelector = "") {
+        // Find all valid DOM elements if query
+        var validAncestorNodes = {};
+
         if (cssSelector !== "") {
             var validAncestorNodes = document.querySelectorAll(cssSelector);
         }
 
-        grandparents = this.grandParent();
-        ancestor = "";
+        var ancestors = [];
 
-        for (var i = 0; i < grandparents.getLength(); i++) {
+        // Find all grandparents
+        var grandparents = [];
+
+        for (var i = 0; i < this.nodes.length; i++) {
+            var currentElement = this.nodes[i];
+
+            if (currentElement.parentNode) {
+                var currentParent = currentElement.parentNode;
+                console.log(currentParent);
+                if (currentParent.parentNode) {
+                    var grandparent = currentParent.parentNode;
+                    console.log(grandparent);
+                    grandparents.push(grandparent);
+                }
+            }
+        }
+
+        console.log(grandparents);
+        console.log(grandparents[0]);
+
+        var ancestors = [];
+
+        for (var i = 0; i < grandparents.length; i++) {
             var currentGrandparent = grandparents[i];
+            console.log(currentGrandparent);
+
             if (cssSelector !== "") {
                 var currentAncestor = currentGrandparent.parentNode;
                 for (var i = 0; i < validAncestorNodes.length; i++) {
                     while (currentAncestor) {
                         if (currentAncestor === validAncestorNodes[i]) {
-                            return new MakeBelieveElement(currentAncestor);
+                            ancestors.push(currentAncestor);
                         } else {
                             currentAncestor = currentAncestor.parentNode;
                         }
@@ -81,10 +157,10 @@
                 }
             } else {
                 ancestor = grandparents[i].parentNode;
-                return new MakeBelieveElement(ancestor);
+                ancestors.push(ancestor);
             }
         }
-        return new MakeBelieveElement();
+        return new MakeBelieveElement(ancestors);
     }
 
     // 7. Click handler
@@ -222,47 +298,54 @@
         }
     }
 
+    // 1. Define the __ keyword
     window.__ = query;
 
 })(window);
 
 // // testing parent
-// var paragraphs = __('p');
+var paragraphs = __('p');
 // var divs = __('.item');
 // var parent = __('#password').parent();
 // var formParent = __('#password').parent('form');
+// var root = __('document');
 
 // console.log(paragraphs.parent());
 // console.log(paragraphs.parent('#paragraph_parent'));
 // console.log(divs.parent());
+// console.log(parent);
+// console.log(formParent);
+// console.log(root.parent());
 
 // // testing grandParent
 // var grandParent = __('#password').grandParent();
 // var idGrandParent = __('#password').grandParent('#grandma');
+// var paragraphsGrandParent = paragraphs.grandParent();
 // var emptyGrandParent = __('#password').grandParent('#unknownId');
 
 // console.log(grandParent); // returns the div with id #grandma
 // console.log(idGrandParent); // returns same div
+// console.log(paragraphsGrandParent); // reutrns an empty object
 // console.log(emptyGrandParent); // reutrns an empty object
 
-// // testing ancestor
-// var ancestor1 = __('#password').ancestor();
+// testing ancestor
+var ancestor1 = __('#password').ancestor();
 // var ancestor2 = __('#password').ancestor('.ancestor');
 // var rootElem = __('#password').ancestor('.root');
 // var ancestorSib = __('#password').ancestor('.ancestor-sib');
 
-// console.log(ancestor1); // Returns div with class .ancestor
+console.log(ancestor1); // Returns div with class .ancestor
 // console.log(ancestor2); // Returns div with class .ancestor
 // console.log(rootElem); // Returns div with class .root
 // console.log(ancestorSib); // Returns empty
 
-//testing onClick
-__("#password").onClick(function (evt) {
-    console.log(evt.target.value);
-})
+// //testing onClick
+// __("#password").onClick(function (evt) {
+//     console.log(evt.target.value);
+// })
 
-// testing add text
-__("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
+// // testing add text
+// __("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
 
 //__("#shakespeare-novel").delete()
 
@@ -276,45 +359,30 @@ __("#shakespeare-novel").insertText("If you can't love urself, how in the hell u
 //     console.log("Hello from input");
 // })
 
-// testing append
-__(".the-appender").append("I am an appended paragraph!")
-__(".the-appender").append(document.createElement('p').appendChild(document.createTextNode("I am an appended paragraph!")));
+// // testing append
+// __(".the-appender").append("I am an appended paragraph!")
+// __(".the-appender").append(document.createElement('p').appendChild(document.createTextNode("I am an appended paragraph!")));
 
-// testing prepend
-__(".the-prepender").prepend("I am a prepended paragraph!")
-__(".the-prepender").prepend(document.createElement('p').appendChild(document.createTextNode("I am a prepended paragraph!")));
+// // testing prepend
+// __(".the-prepender").prepend("I am a prepended paragraph!")
+// __(".the-prepender").prepend(document.createElement('p').appendChild(document.createTextNode("I am a prepended paragraph!")));
 
-var herokuUrl = 'https://serene-island-81305.herokuapp.com';
+// var herokuUrl = 'https://serene-island-81305.herokuapp.com';
 
-// testing ajax
-__.ajax({
-    url: herokuUrl,
-    method: 'GET',
-    timeout: 10,
-    data: {},
-    headers: { 'Authorization': 'my-secret-key' },
-    success: function (resp) {
-        console.log(resp);
-    },
-    fail: function (error) {
-        console.log(error);
-    },
-    beforeSend: function (xhr) {
-        console.log("Hello from beforeSend");
-    }
-});
-
-// // POST request
-// var postRequest = new XMLHttpRequest();
-// postRequest.open('POST', herokuUrl + '/api/200');
-
-// postRequest.setRequestHeader('Content-Type', 'application/json');
-
-// postRequest.onreadystatechange = function () {
-//     if (postRequest.readyState === XMLHttpRequest.DONE) {
-//         console.log(JSON.parse(postRequest.responseText));
+// // testing ajax
+// __.ajax({
+//     url: herokuUrl,
+//     method: 'GET',
+//     timeout: 10,
+//     data: {},
+//     headers: { 'Authorization': 'my-secret-key' },
+//     success: function (resp) {
+//         console.log(resp);
+//     },
+//     fail: function (error) {
+//         console.log(error);
+//     },
+//     beforeSend: function (xhr) {
+//         console.log("Hello from beforeSend");
 //     }
-//     console.log(postRequest.readyState);
-// };
-
-// postRequest.send(JSON.stringify({ a: 1, b: 2, c: 3 }));
+// });
