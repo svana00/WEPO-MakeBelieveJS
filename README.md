@@ -1,2 +1,3 @@
 # Large Assignment I
-Creating a JQuery library.
+
+Rereating a few useful functions from the JQuery library.

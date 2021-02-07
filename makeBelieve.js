@@ -1,6 +1,4 @@
-
 (function () {
-    // Setup MakeBelieveJS
 
     // MakeBelieveElement constructor function
     function MakeBelieveElement(nodes) {
@@ -22,7 +20,7 @@
     };
 
     function contains(list, element) {
-        for (i = 0; i < list.length; i++) {
+        for (var i = 0; i < list.length; i++) {
             if (element == list[i]) {
                 return true;
             }
@@ -33,8 +31,10 @@
     // 4. Find parent method
     MakeBelieveElement.prototype.parent = function (cssSelector = "") {
         // If selector, find all elements that are valid
+        var validParentNodes = {};
+
         if (cssSelector !== "") {
-            var validParentNodes = document.querySelectorAll(cssSelector);
+            validParentNodes = document.querySelectorAll(cssSelector);
         }
 
         var parents = [];
@@ -59,7 +59,7 @@
         }
 
         return new MakeBelieveElement(parents);
-    }
+    };
 
     // 5. grandParent method
     MakeBelieveElement.prototype.grandParent = function (cssSelector = "") {
@@ -71,7 +71,7 @@
 
         // Find all valid nodes in the document if query
         if (cssSelector !== "") {
-            var validGrandparentNodes = document.querySelectorAll(cssSelector);
+            validGrandparentNodes = document.querySelectorAll(cssSelector);
         }
 
         // Find all parents
@@ -80,16 +80,16 @@
             var currentElement = this.nodes[i];
 
             if (currentElement.parentNode) {
-                var currentParent = currentElement.parentNode;
-                parents.push(currentParent);
+                var parent = currentElement.parentNode;
+                parents.push(parent);
             }
         }
 
-        var grandparents = []
+        var grandparents = [];
 
         // Find the first valid grandparent for every node and add to list
-        for (var i = 0; i < parents.length; i++) {
-            var currentParent = parents[i];
+        for (var j = 0; j < parents.length; j++) {
+            var currentParent = parents[j];
 
             if (currentParent.parentNode) {
                 var currentGrandparent = currentParent.parentNode;
@@ -98,7 +98,7 @@
                     if (cssSelector !== "") {
                         if (validGrandparentNodes.length > 0) {
                             for (i = 0; i < validGrandparentNodes.length; i++) {
-                                if (validGrandparentNodes[i] === currentGrandparent) {
+                                if (validGrandparentNodes[j] === currentGrandparent) {
                                     grandparents.push(currentGrandparent);
                                 }
                             }
@@ -111,7 +111,7 @@
 
         }
         return new MakeBelieveElement(grandparents);
-    }
+    };
 
     // 6. Ancestor
     MakeBelieveElement.prototype.ancestor = function (cssSelector = "") {
@@ -120,10 +120,8 @@
 
         // 
         if (cssSelector !== "") {
-            var validAncestorNodes = document.querySelectorAll(cssSelector);
+            validAncestorNodes = document.querySelectorAll(cssSelector);
         }
-
-        var ancestors = [];
 
         // Find all grandparents
         var grandparents = this.grandParent();
@@ -135,7 +133,7 @@
             var currentGrandparent = grandparents[i];
 
             if (cssSelector === "") {
-                ancestor = grandparents[i].parentNode;
+                var ancestor = grandparents[i].parentNode;
                 ancestors.push(ancestor);
             } else {
                 if (currentGrandparent.parentNode) {
@@ -153,21 +151,25 @@
         }
 
         return new MakeBelieveElement(ancestors);
-    }
+    };
 
     // 7. Click handler
     MakeBelieveElement.prototype.onClick = function (callback) {
         for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].addEventListener("click", callback);
-        };
-    }
+        }
+
+        return this;
+    };
 
     // 8. Insert text method
     MakeBelieveElement.prototype.insertText = function (text) {
         for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].textContent = text;
-        };
-    }
+        }
+
+        return this;
+    };
 
     function isValidHtml(string) {
         var doc = document.createElement('div');
@@ -184,68 +186,81 @@
         if (isValidHtml(htmlString)) {
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].innerHTML += htmlString;
-            };
+            }
         } else if (isDomElement(htmlString)) {
-            for (var i = 0; i < this.nodes.length; i++) {
-                this.nodes[i].appendChild(htmlString);
-            };
+            for (var j = 0; j < this.nodes.length; j++) {
+                this.nodes[j].appendChild(htmlString);
+            }
         }
-    }
+        return this;
+    };
 
     // 10. prepend HTML method
     MakeBelieveElement.prototype.prepend = function (htmlString) {
         if (isValidHtml(htmlString)) {
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].innerHTML = htmlString + this.nodes[i].innerHTML;
-            };
+            }
         } else if (isDomElement(htmlString)) {
-            for (var i = 0; i < this.nodes.length; i++) {
-                this.nodes[i].insertBefore(htmlString, this.nodes[i].firstChild);
-            };
+            for (var j = 0; j < this.nodes.length; j++) {
+                this.nodes[j].insertBefore(htmlString, this.nodes[j].firstChild);
+            }
         }
-    }
+        return this;
+    };
 
     // 11. delete method
     MakeBelieveElement.prototype.delete = function (cssSelector = "") {
         for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].parentNode.removeChild(this.nodes[i]);
-        };
-    }
+        }
+
+        return this;
+    };
 
     // 13. css() method
     MakeBelieveElement.prototype.css = function (cssElement, cssElementVal) {
         //document.getElementById("myH1").style.color = "red"; 
         for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].style[cssElement] = cssElementVal;
-        };
-    }
+        }
+
+        return this;
+    };
 
     // 14. toggleClass() implementation
     MakeBelieveElement.prototype.toggleClass = function (someClass) {
         for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].classList.toggle(someClass);
-        };
-    }
+        }
+
+        return this;
+    };
 
     // 15. submit handler for forms
     MakeBelieveElement.prototype.onSubmit = function (callback) {
-        for (let i = 0; i < this.nodes.length; i++) {
+        for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].addEventListener("submit", callback);
         }
-    }
+
+        return this;
+    };
 
     // 16. input handler for input tags
     MakeBelieveElement.prototype.onInput = function (callback) {
-        for (let i = 0; i < this.nodes.length; i++) {
+        for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].addEventListener("input", callback);
         }
-    }
 
-    let query = function (query) {
+        return this;
+    };
+
+    var query = function (query) {
         var elements = document.querySelectorAll(query);
         if (elements) {
             return new MakeBelieveElement(elements, elements.length);
         }
+
         return {};
     };
 
@@ -263,7 +278,7 @@
         if (object.url !== "") {
             var request = new XMLHttpRequest();
             request.open(object.method, object.url);
-            request.timeout = object.timeout
+            request.timeout = object.timeout;
 
             for (var header in object.headers) {
                 request.setRequestHeader(header, object.headers[header]);
@@ -287,7 +302,7 @@
         } else {
             console.log("Url missing.");
         }
-    }
+    };
 
     // 1. Define the __ keyword
     window.__ = query;
