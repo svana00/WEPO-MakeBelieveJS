@@ -128,17 +128,13 @@
     // 9. Append HTML method
     MakeBelieveElement.prototype.append = function (htmlString) {
         if (isValidHtml(htmlString)) {
-            console.log("Valid html");
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].innerHTML += htmlString;
             };
         } else if (is_dom_element(htmlString)) {
-            console.log("Valid DOM");
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].appendChild(htmlString);
             };
-        } else {
-            console.log("Nothing :(");
         }
     }
 
@@ -162,7 +158,7 @@
     // 11. delete method
     MakeBelieveElement.prototype.delete = function (cssSelector = "") {
         for (var i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].remove();
+            this.nodes[i].parentNode.removeChild(this.nodes[i]);
         };
     }
 
