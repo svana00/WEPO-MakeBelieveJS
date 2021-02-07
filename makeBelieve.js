@@ -1,5 +1,5 @@
 
-(function (globalObj) {
+(function () {
     // Setup MakeBelieveJS
 
     // MakeBelieveElement constructor function
@@ -19,11 +19,6 @@
     MakeBelieveElement.prototype.getLength = function () {
         return this.nodes.length;
     };
-
-    // Query selector
-    function query(cssSelector) {
-        return new MakeBelieveElement(document.querySelectorAll(cssSelector));
-    }
 
     // 4. Find parent method
     MakeBelieveElement.prototype.parent = function (cssSelector = "") {
@@ -178,8 +173,16 @@
         }
     }
 
+    let query = function (query) {
+        var elements = document.querySelectorAll(query);
+        if (elements) {
+            return new MakeBelieveElement(elements, elements.length);
+        }
+        return {};
+    };
+
     // 12. JQuery ajax method
-    globalObj.ajax = function (object = {
+    query.ajax = function (object = {
         url: '',
         method: 'GET',
         timeout: 0,
@@ -190,8 +193,6 @@
         beforeSend: null
     }) {
         if (object.url !== "") {
-            console.log("Yay url");
-
             var request = new XMLHttpRequest();
             request.open(object.method, object.url);
             request.timeout = object.timeout
@@ -215,13 +216,14 @@
                 object.beforeSend(request);
             }
 
-            request.send(data);
+            request.send(object.data);
         } else {
             console.log("Url missing");
         }
     }
 
-    globalObj.__ = query;
+    window.__ = query;
+
 })(window);
 
 // // testing parent
