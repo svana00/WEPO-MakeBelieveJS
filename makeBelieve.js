@@ -21,10 +21,18 @@
         return this.nodes.length;
     };
 
+    function contains(list, element) {
+        for (i = 0; i < list.length; i++) {
+            if (element == list[i]) {
+                return true;
+            }
+            return false;
+        }
+    }
+
     // 4. Find parent method
     MakeBelieveElement.prototype.parent = function (cssSelector = "") {
         // If selector, find all elements that are valid
-        var validParentNodes = {};
         if (cssSelector !== "") {
             var validParentNodes = document.querySelectorAll(cssSelector);
         }
@@ -39,10 +47,8 @@
                 if (!parents.includes(currentParent)) {
                     if (cssSelector !== "") {
                         if (validParentNodes.length > 0) {
-                            for (var i = 0; i < validParentNodes.length; i++) {
-                                if (validParentNodes[i] === currentParent) {
-                                    parents.push(currentParent);
-                                }
+                            if (contains(validParentNodes, currentParent)) {
+                                parents.push(currentParent);
                             }
                         }
                     } else {
@@ -105,15 +111,6 @@
 
         }
         return new MakeBelieveElement(grandparents);
-    }
-
-    function contains(list, element) {
-        for (i = 0; i < list.length; i++) {
-            if (element == list[i]) {
-                return true;
-            }
-            return false;
-        }
     }
 
     // 6. Ancestor
@@ -280,7 +277,6 @@
                         object.fail(request.responseText);
                     }
                 }
-                console.log(request.readyState);
             };
 
             if (object.beforeSend) {
@@ -289,7 +285,7 @@
 
             request.send(object.data);
         } else {
-            console.log("Url missing");
+            console.log("Url missing.");
         }
     }
 
@@ -297,87 +293,3 @@
     window.__ = query;
 
 })(window);
-
-// // testing parent
-var paragraphs = __('p');
-// var divs = __('.item');
-// var parent = __('#password').parent();
-// var formParent = __('#password').parent('form');
-// var root = __('document');
-
-// console.log(paragraphs.parent());
-// console.log(paragraphs.parent('#paragraph_parent'));
-// console.log(divs.parent());
-// console.log(parent);
-// console.log(formParent);
-// console.log(root.parent());
-
-// testing grandParent
-var grandParent = __('#password').grandParent();
-var idGrandParent = __('#password').grandParent('#grandma');
-var paragraphsGrandParent = paragraphs.grandParent();
-var emptyGrandParent = __('#password').grandParent('#unknownId');
-
-console.log(grandParent); // returns the div with id #grandma
-console.log(idGrandParent); //  returns the div with id #grandma
-console.log(paragraphsGrandParent); // returns body and html
-console.log(emptyGrandParent); // reutrns an empty object
-
-// testing ancestor
-var ancestor1 = __('#password').ancestor();
-var ancestor2 = __('#password').ancestor('.ancestor');
-var rootElem = __('#password').ancestor('.root');
-var ancestorSib = __('#password').ancestor('.ancestor-sib');
-
-console.log(ancestor1); // Returns div with class .ancestor
-console.log(ancestor2); // Returns div with class .ancestor
-console.log(rootElem); // Returns div with class .root
-console.log(ancestorSib); // Returns empty
-
-//testing onClick
-__("#password").onClick(function (evt) {
-    console.log(evt.target.value);
-})
-
-// testing add text
-__("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
-
-__("#shakespeare-novel").delete()
-
-// testing on submit
-__("#my-form").onSubmit(function (evt) {
-    console.log("Hello from submit");
-})
-
-// testing in input
-__("#username").onInput(function (evt) {
-    console.log("Hello from input");
-})
-
-// testing append
-__(".the-appender").append("I am an appended paragraph!")
-__(".the-appender").append(document.createElement('p').appendChild(document.createTextNode("I am an appended paragraph!")));
-
-// testing prepend
-__(".the-prepender").prepend("I am a prepended paragraph!")
-__(".the-prepender").prepend(document.createElement('p').appendChild(document.createTextNode("I am a prepended paragraph!")));
-
-var herokuUrl = 'https://serene-island-81305.herokuapp.com';
-
-// testing ajax
-__.ajax({
-    url: herokuUrl,
-    method: 'GET',
-    timeout: 10,
-    data: {},
-    headers: { 'Authorization': 'my-secret-key' },
-    success: function (resp) {
-        console.log(resp);
-    },
-    fail: function (error) {
-        console.log(error);
-    },
-    beforeSend: function (xhr) {
-        console.log("Hello from beforeSend");
-    }
-});
