@@ -107,11 +107,21 @@
         return new MakeBelieveElement(grandparents);
     }
 
+    function contains(list, element) {
+        for (i = 0; i < list.length; i++) {
+            if (element == list[i]) {
+                return true;
+            }
+            return false;
+        }
+    }
+
     // 6. Ancestor
     MakeBelieveElement.prototype.ancestor = function (cssSelector = "") {
         // Find all valid DOM elements if query
         var validAncestorNodes = {};
 
+        // 
         if (cssSelector !== "") {
             var validAncestorNodes = document.querySelectorAll(cssSelector);
         }
@@ -119,47 +129,32 @@
         var ancestors = [];
 
         // Find all grandparents
-        var grandparents = [];
-
-        for (var i = 0; i < this.nodes.length; i++) {
-            var currentElement = this.nodes[i];
-
-            if (currentElement.parentNode) {
-                var currentParent = currentElement.parentNode;
-                console.log(currentParent);
-                if (currentParent.parentNode) {
-                    var grandparent = currentParent.parentNode;
-                    console.log(grandparent);
-                    grandparents.push(grandparent);
-                }
-            }
-        }
-
-        console.log(grandparents);
-        console.log(grandparents[0]);
+        var grandparents = this.grandParent();
 
         var ancestors = [];
 
-        for (var i = 0; i < grandparents.length; i++) {
+        // Find one ancestor for each node
+        for (var i = 0; i < grandparents.getLength(); i++) {
             var currentGrandparent = grandparents[i];
-            console.log(currentGrandparent);
 
-            if (cssSelector !== "") {
-                var currentAncestor = currentGrandparent.parentNode;
-                for (var i = 0; i < validAncestorNodes.length; i++) {
-                    while (currentAncestor) {
-                        if (currentAncestor === validAncestorNodes[i]) {
-                            ancestors.push(currentAncestor);
-                        } else {
-                            currentAncestor = currentAncestor.parentNode;
-                        }
-                    }
-                }
-            } else {
+            if (cssSelector === "") {
                 ancestor = grandparents[i].parentNode;
                 ancestors.push(ancestor);
+            } else {
+                if (currentGrandparent.parentNode) {
+                    var currentAncestor = currentGrandparent.parentNode;
+
+                    while (!contains(validAncestorNodes, currentAncestor) && currentAncestor) {
+                        currentAncestor = currentAncestor.parentNode;
+                    }
+
+                    if (currentAncestor && !ancestors.includes(currentAncestor)) {
+                        ancestors.push(currentAncestor);
+                    }
+                }
             }
         }
+
         return new MakeBelieveElement(ancestors);
     }
 
@@ -183,7 +178,7 @@
         return (doc.innerHTML === string);
     }
 
-    function is_dom_element(htmlString) {
+    function isDomElement(htmlString) {
         return typeof htmlString === 'object' && htmlString.nodeType !== undefined;
     }
 
@@ -193,7 +188,7 @@
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].innerHTML += htmlString;
             };
-        } else if (is_dom_element(htmlString)) {
+        } else if (isDomElement(htmlString)) {
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].appendChild(htmlString);
             };
@@ -206,7 +201,7 @@
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].innerHTML = htmlString + this.nodes[i].innerHTML;
             };
-        } else if (is_dom_element(htmlString)) {
+        } else if (isDomElement(htmlString)) {
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].insertBefore(htmlString, this.nodes[i].firstChild);
             };
@@ -273,8 +268,8 @@
             request.open(object.method, object.url);
             request.timeout = object.timeout
 
-            for (let header in request.headers) {
-                request.setRequestHeader(header, request.headers[header]);
+            for (var header in object.headers) {
+                request.setRequestHeader(header, object.headers[header]);
             }
 
             request.onreadystatechange = function () {
@@ -317,72 +312,72 @@ var paragraphs = __('p');
 // console.log(formParent);
 // console.log(root.parent());
 
-// // testing grandParent
-// var grandParent = __('#password').grandParent();
-// var idGrandParent = __('#password').grandParent('#grandma');
-// var paragraphsGrandParent = paragraphs.grandParent();
-// var emptyGrandParent = __('#password').grandParent('#unknownId');
+// testing grandParent
+var grandParent = __('#password').grandParent();
+var idGrandParent = __('#password').grandParent('#grandma');
+var paragraphsGrandParent = paragraphs.grandParent();
+var emptyGrandParent = __('#password').grandParent('#unknownId');
 
-// console.log(grandParent); // returns the div with id #grandma
-// console.log(idGrandParent); // returns same div
-// console.log(paragraphsGrandParent); // reutrns an empty object
-// console.log(emptyGrandParent); // reutrns an empty object
+console.log(grandParent); // returns the div with id #grandma
+console.log(idGrandParent); //  returns the div with id #grandma
+console.log(paragraphsGrandParent); // returns body and html
+console.log(emptyGrandParent); // reutrns an empty object
 
 // testing ancestor
 var ancestor1 = __('#password').ancestor();
-// var ancestor2 = __('#password').ancestor('.ancestor');
-// var rootElem = __('#password').ancestor('.root');
-// var ancestorSib = __('#password').ancestor('.ancestor-sib');
+var ancestor2 = __('#password').ancestor('.ancestor');
+var rootElem = __('#password').ancestor('.root');
+var ancestorSib = __('#password').ancestor('.ancestor-sib');
 
 console.log(ancestor1); // Returns div with class .ancestor
-// console.log(ancestor2); // Returns div with class .ancestor
-// console.log(rootElem); // Returns div with class .root
-// console.log(ancestorSib); // Returns empty
+console.log(ancestor2); // Returns div with class .ancestor
+console.log(rootElem); // Returns div with class .root
+console.log(ancestorSib); // Returns empty
 
-// //testing onClick
-// __("#password").onClick(function (evt) {
-//     console.log(evt.target.value);
-// })
+//testing onClick
+__("#password").onClick(function (evt) {
+    console.log(evt.target.value);
+})
 
-// // testing add text
-// __("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
+// testing add text
+__("#shakespeare-novel").insertText("If you can't love urself, how in the hell u gon' love somebody else.")
 
-//__("#shakespeare-novel").delete()
+__("#shakespeare-novel").delete()
 
-// // testing on submit
-// __("#my-form").onSubmit(function (evt) {
-//     console.log("Hello from submit");
-// })
+// testing on submit
+__("#my-form").onSubmit(function (evt) {
+    console.log("Hello from submit");
+})
 
-// // testing in input
-// __("#username").onInput(function (evt) {
-//     console.log("Hello from input");
-// })
+// testing in input
+__("#username").onInput(function (evt) {
+    console.log("Hello from input");
+})
 
-// // testing append
-// __(".the-appender").append("I am an appended paragraph!")
-// __(".the-appender").append(document.createElement('p').appendChild(document.createTextNode("I am an appended paragraph!")));
+// testing append
+__(".the-appender").append("I am an appended paragraph!")
+__(".the-appender").append(document.createElement('p').appendChild(document.createTextNode("I am an appended paragraph!")));
 
-// // testing prepend
-// __(".the-prepender").prepend("I am a prepended paragraph!")
-// __(".the-prepender").prepend(document.createElement('p').appendChild(document.createTextNode("I am a prepended paragraph!")));
+// testing prepend
+__(".the-prepender").prepend("I am a prepended paragraph!")
+__(".the-prepender").prepend(document.createElement('p').appendChild(document.createTextNode("I am a prepended paragraph!")));
 
-// var herokuUrl = 'https://serene-island-81305.herokuapp.com';
+var herokuUrl = 'https://serene-island-81305.herokuapp.com';
 
-// // testing ajax
-// __.ajax({
-//     url: herokuUrl,
-//     method: 'GET',
-//     timeout: 10,
-//     data: {},
-//     headers: { 'Authorization': 'my-secret-key' },
-//     success: function (resp) {
-//         console.log(resp);
-//     },
-//     fail: function (error) {
-//         console.log(error);
-//     },
-//     beforeSend: function (xhr) {
-//         console.log("Hello from beforeSend");
-//     }
-// });
+// testing ajax
+__.ajax({
+    url: herokuUrl,
+    method: 'GET',
+    timeout: 10,
+    data: {},
+    headers: { 'Authorization': 'my-secret-key' },
+    success: function (resp) {
+        console.log(resp);
+    },
+    fail: function (error) {
+        console.log(error);
+    },
+    beforeSend: function (xhr) {
+        console.log("Hello from beforeSend");
+    }
+});
