@@ -20,15 +20,6 @@
         return this.nodes.length;
     };
 
-    MakeBelieveElement.prototype.getTagNames = function () {
-        var tagNames = [];
-        for (var i = 0; i < this.nodes.length; i++) {
-            var currentElement = this.nodes[i];
-            tagNames.push(currentElement.tagName.toLowerCase());
-        }
-        return tagNames;
-    }
-
     // Query selector
     function query(cssSelector) {
         return new MakeBelieveElement(document.querySelectorAll(cssSelector));
@@ -141,17 +132,13 @@
     // 10. prepend HTML method
     MakeBelieveElement.prototype.prepend = function (htmlString) {
         if (isValidHtml(htmlString)) {
-            console.log("Valid html");
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].innerHTML = htmlString + this.nodes[i].innerHTML;
             };
         } else if (is_dom_element(htmlString)) {
-            console.log("Valid DOM");
             for (var i = 0; i < this.nodes.length; i++) {
                 this.nodes[i].insertBefore(htmlString, this.nodes[i].firstChild);
             };
-        } else {
-            console.log("Nothing :(");
         }
     }
 
@@ -160,11 +147,6 @@
         for (var i = 0; i < this.nodes.length; i++) {
             this.nodes[i].parentNode.removeChild(this.nodes[i]);
         };
-    }
-
-    // 12. JQuery ajax method
-    globalObj.ajax = function () {
-        return 0;
     }
 
     // 13. css() method
@@ -193,6 +175,49 @@
     MakeBelieveElement.prototype.onInput = function (callback) {
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].addEventListener("input", callback);
+        }
+    }
+
+    // 12. JQuery ajax method
+    globalObj.ajax = function (object = {
+        url: '',
+        method: 'GET',
+        timeout: 0,
+        data: {},
+        headers: {},
+        success: null,
+        fail: null,
+        beforeSend: null
+    }) {
+        if (object.url !== "") {
+            console.log("Yay url");
+
+            var request = new XMLHttpRequest();
+            request.open(object.method, object.url);
+            request.timeout = object.timeout
+
+            for (let header in request.headers) {
+                request.setRequestHeader(header, request.headers[header]);
+            }
+
+            request.onreadystatechange = function () {
+                if (request.readyState === XMLHttpRequest.DONE) {
+                    if (request.status === 200) {
+                        object.success(request.responseText);
+                    } else {
+                        object.fail(request.responseText);
+                    }
+                }
+                console.log(request.readyState);
+            };
+
+            if (object.beforeSend) {
+                object.beforeSend(request);
+            }
+
+            request.send(data);
+        } else {
+            console.log("Url missing");
         }
     }
 
@@ -257,20 +282,25 @@ __(".the-appender").append(document.createElement('p').appendChild(document.crea
 __(".the-prepender").prepend("I am a prepended paragraph!")
 __(".the-prepender").prepend(document.createElement('p').appendChild(document.createTextNode("I am a prepended paragraph!")));
 
-// var herokuUrl = 'https://serene-island-81305.herokuapp.com';
+var herokuUrl = 'https://serene-island-81305.herokuapp.com';
 
-// // GET request
-// var basicRequest = new XMLHttpRequest();
-// basicRequest.open('GET', herokuUrl);
-
-// basicRequest.onreadystatechange = function () {
-//     if (basicRequest.readyState === XMLHttpRequest.DONE) {
-//         console.log(basicRequest.responseText);
-//     }
-//     console.log(basicRequest.readyState);
-// };
-
-// basicRequest.send();
+// testing ajax
+__.ajax({
+    url: herokuUrl,
+    method: 'GET',
+    timeout: 10,
+    data: {},
+    headers: { 'Authorization': 'my-secret-key' },
+    success: function (resp) {
+        console.log(resp);
+    },
+    fail: function (error) {
+        console.log(error);
+    },
+    beforeSend: function (xhr) {
+        console.log("Hello from beforeSend");
+    }
+});
 
 // // POST request
 // var postRequest = new XMLHttpRequest();
